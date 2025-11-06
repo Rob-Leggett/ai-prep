@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-prep"
+version = "0.1.0"
+description = "Local AI stack: CatBoost + RAG + FastAPI + MLflow + DuckDB"
+readme = "README.md"
+authors = [{ name = "Robert Leggett", email = "you@example.com" }]
+requires-python = ">=3.9"
+
+dependencies = [
+    # Core
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "pyyaml>=6.0",
+    "urllib3<2",
+    "requests<2.32",
+
+    # Classic ML
+    "catboost>=1.2",
+    "shap>=0.45",
+
+    # Tracking/registry
+    "mlflow>=2.16",
+    "cloudpickle>=3.0",
+
+    # API
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.8",
+
+    # RAG + embeddings
+    "chromadb>=0.5",
+    "sentence-transformers>=3.0",
+    "faiss-cpu>=1.8",
+
+    # LLMs & agents
+    "langchain>=0.3",
+    "langchain-ollama>=0.1",
+    "langgraph>=0.1",
+    "openai>=1.50",
+
+    # Lakehouse
+    "duckdb>=1.1",
+    "pyarrow>=17.0",
+
+    # Ingestion & tokens
+    "pypdf>=4.0",
+    "tiktoken>=0.7",
+
+    # Optional utils
+    "python-dotenv>=1.0",
+    "joblib>=1.4",
+
+    # Notebooks & viz (optional)
+    "jupyterlab>=4.2",
+    "matplotlib>=3.9",
+    "seaborn>=0.13"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.8",
+    "ruff>=0.5",
+    "pytest>=8.2",
+    "ipykernel>=6.29"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "ml*", "rag*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

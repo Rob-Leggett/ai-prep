@@ -1,0 +1,44 @@
+# Core language + utilities
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+pyyaml>=6.0
+urllib3<2
+requests<2.32 # for HTTP calls (LangChain, MLflow, etc.)
+
+# Classic ML
+catboost>=1.2
+shap>=0.45
+
+# Local model tracking & registry
+mlflow>=2.16
+cloudpickle>=3.0  # used by MLflow for serialisation
+
+# Web service for serving predictions / agents
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.8  # FastAPI depends on Pydantic v2+
+
+# Vector DB + embeddings (for RAG)
+chromadb>=0.5
+sentence-transformers>=3.0
+faiss-cpu>=1.8
+
+# Local LLMs (Ollama integration)
+langchain>=0.3
+langchain-ollama>=0.1
+langgraph>=0.1
+openai>=1.50  # LangChain requires this for certain toolkits (safe to include)
+
+# Data Lakehouse (Fabric-style local substitute)
+duckdb>=1.1
+pyarrow>=17.0
+
+# PDF + text ingestion
+pypdf>=4.0
+tiktoken>=0.7  # token counting / chunk sizing
+
+# Optional: notebooks & visualisation
+jupyterlab>=4.2
+matplotlib>=3.9
+seaborn>=0.13

@@ -205,3 +205,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+/.idea/
+
+# MLflow runs and artefacts
+mlruns/
+mlartifacts/
+models/
+/catboost_info/
+rag/chroma_store/
