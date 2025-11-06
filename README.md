@@ -128,13 +128,13 @@ uvicorn app.main:app --reload
 
 Available endpoints:
 
-| **Endpoint** | **Description** | **Example** |
-|---------------|----------------|--------------|
-| `/` | Redirects to interactive docs | [http://127.0.0.1:8000/](http://127.0.0.1:8000/) |
-| `/health` | Health check | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) |
-| `/predict` | Calls CatBoost model | [http://127.0.0.1:8000/predict?age=42&income=90000](http://127.0.0.1:8000/predict?age=42&income=90000) |
-| `/ask` | Queries your Chroma index via Llama 3 | [http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?](http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?) |
-| `/agent` | Orchestrates ML + RAG via LangGraph | [http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?](http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?) |
+| **Endpoint**   | **Description**                       | **Example**                                                                                                                                                      |
+|----------------|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/`            | Redirects to interactive docs         | [http://127.0.0.1:8000/](http://127.0.0.1:8000/)                                                                                                                 |
+| `/health`      | Health check                          | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)                                                                                                     |
+| `/predict`     | Calls CatBoost model                  | [http://127.0.0.1:8000/predict?age=42&income=90000](http://127.0.0.1:8000/predict?age=42&income=90000)                                                           |
+| `/ask`         | Queries your Chroma index via Llama 3 | [http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?](http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?) |
+| `/agent`       | Orchestrates ML + RAG via LangGraph   | [http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?](http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?)                         |
 
 Interactive Swagger UI:  
 ➡️ [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
@@ -143,27 +143,27 @@ Interactive Swagger UI:
 
 ## 🧮 Pipeline Summary
 
-| **Step** | **Command** | **Result** |
-|-----------|-------------|------------|
-| 1. Train CatBoost | `python ml/train_catboost.py` | Logs model in `mlruns/` |
-| 2. Build RAG index | `python rag/build_index.py` or `python rag/build_index_from_csv.py` | Indexes PDFs / CSV |
-| 3. Start API | `uvicorn app.main:app --reload` | `/predict`, `/ask`, `/agent` live |
-| 4. Try query | Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Interactive Swagger UI |
+| **Step**           | **Command**                                                           | **Result**                         |
+|--------------------|-----------------------------------------------------------------------|------------------------------------|
+| 1. Train CatBoost  | `python ml/train_catboost.py`                                         | Logs model in `mlruns/`            |
+| 2. Build RAG index | `python rag/build_index.py` or `python rag/build_index_from_csv.py`   | Indexes PDFs / CSV                 |
+| 3. Start API       | `uvicorn app.main:app --reload`                                       | `/predict`, `/ask`, `/agent` live  |
+| 4. Try query       | Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)        | Interactive Swagger UI             |
 
 ---
 
 ## 🧰 Tech Stack Overview
 
-| **Category** | **Key Libraries** | **Purpose** |
-|---------------|------------------|--------------|
-| Classic ML | `catboost`, `shap` | Model training + interpretability |
-| Serving | `fastapi`, `uvicorn` | API endpoints for `/predict`, `/ask`, `/agent` |
-| RAG Stack | `chromadb`, `sentence-transformers`, `faiss-cpu` | Embed and query structured/unstructured data |
-| Agents | `langchain`, `langgraph`, `langchain-ollama` | Build reasoning chains using multiple tools |
-| LLM Runtime | `ollama` *(external binary)* | Run Llama 3 locally |
-| Data | `duckdb`, `pyarrow` | Mini-lakehouse for structured datasets |
-| Experiment Tracking | `mlflow` | Track metrics, artefacts, and models |
-| Visual / Notebook | `jupyterlab`, `matplotlib`, `seaborn` | Exploration & plotting |
+| **Category**        | **Key Libraries**                                | **Purpose**                                    |
+|---------------------|--------------------------------------------------|------------------------------------------------|
+| Classic ML          | `catboost`, `shap`                               | Model training + interpretability              |
+| Serving             | `fastapi`, `uvicorn`                             | API endpoints for `/predict`, `/ask`, `/agent` |
+| RAG Stack           | `chromadb`, `sentence-transformers`, `faiss-cpu` | Embed and query structured/unstructured data   |
+| Agents              | `langchain`, `langgraph`, `langchain-ollama`     | Build reasoning chains using multiple tools    |
+| LLM Runtime         | `ollama` *(external binary)*                     | Run Llama 3 locally                            |
+| Data                | `duckdb`, `pyarrow`                              | Mini-lakehouse for structured datasets         |
+| Experiment Tracking | `mlflow`                                         | Track metrics, artefacts, and models           |
+| Visual / Notebook   | `jupyterlab`, `matplotlib`, `seaborn`            | Exploration & plotting                         |
 
 ---
 
