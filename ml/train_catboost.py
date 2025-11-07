@@ -1,5 +1,3 @@
-import os
-import mlflow
 import mlflow.catboost
 from mlflow.models import infer_signature
 from catboost import CatBoostRegressor

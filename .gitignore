@@ -213,3 +213,7 @@ mlartifacts/
 models/
 /catboost_info/
 rag/chroma_store/
+/.pids/
+
+# Keep uv.lock tracked
+!.uv.lock

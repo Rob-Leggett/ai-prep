@@ -1,44 +1,47 @@
 # Core language + utilities
-pandas>=2.2
-numpy>=1.26
-scikit-learn>=1.5
-pyyaml>=6.0
-urllib3<2
-requests<2.32 # for HTTP calls (LangChain, MLflow, etc.)
+pandas>=2.3.3
+numpy>=2.3.4
+scikit-learn>=1.7.2
+pyyaml>=6.0.3
+urllib3<2.5.0
+requests<2.32.5 # for HTTP calls (LangChain, MLflow, etc.)
 
 # Classic ML
-catboost>=1.2
-shap>=0.45
+catboost>=1.2.8
+shap>=0.49.1
 
 # Local model tracking & registry
-mlflow>=2.16
-cloudpickle>=3.0  # used by MLflow for serialisation
+mlflow>=3.5.1
+cloudpickle>=3.1.2  # used by MLflow for serialisation
 
 # Web service for serving predictions / agents
-fastapi>=0.115
-uvicorn[standard]>=0.30
-pydantic>=2.8  # FastAPI depends on Pydantic v2+
+fastapi>=0.121.0
+uvicorn[standard]>=0.38.0
+pydantic>=2.12.4  # FastAPI depends on Pydantic v2+
+
+# Server
+mcp>=1.21.0
 
 # Vector DB + embeddings (for RAG)
-chromadb>=0.5
-sentence-transformers>=3.0
-faiss-cpu>=1.8
+chromadb>=1.3.4
+sentence-transformers>=5.1.2
+faiss-cpu>=1.12.0
 
 # Local LLMs (Ollama integration)
-langchain>=0.3
-langchain-ollama>=0.1
-langgraph>=0.1
-openai>=1.50  # LangChain requires this for certain toolkits (safe to include)
+langchain>=1.0.0
+langchain-ollama>=0.3.9
+langgraph>=0.6.11
+openai>=2.7.1  # LangChain requires this for certain toolkits (safe to include)
 
 # Data Lakehouse (Fabric-style local substitute)
-duckdb>=1.1
-pyarrow>=17.0
+duckdb>=1.4.1
+pyarrow>=21.0.0
 
 # PDF + text ingestion
-pypdf>=4.0
-tiktoken>=0.7  # token counting / chunk sizing
+pypdf>=6.1.3
+tiktoken>=0.12.0  # token counting / chunk sizing
 
 # Optional: notebooks & visualisation
-jupyterlab>=4.2
-matplotlib>=3.9
-seaborn>=0.13
+jupyterlab>=4.4.10
+matplotlib>=3.10.7
+seaborn>=0.13.2

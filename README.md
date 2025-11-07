@@ -36,14 +36,14 @@ This project demonstrates how to integrate structured ML models, document retrie
 
 ## 🧩 Environment Setup
 
-### 1️⃣ Create a virtual environment
+### Create a virtual environment
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 ```
 
-### 2️⃣ Install dependencies
+### Install dependencies
 ```bash
 pip install -e ".[dev]"
 ```
@@ -52,6 +52,24 @@ If you see build errors for `chromadb` on macOS, install Rust first:
 ```bash
 brew install rust
 ```
+
+### Makefile
+
+| **Command**          | **Description**                                                                                       |
+|----------------------|-------------------------------------------------------------------------------------------------------|
+| `make install`       | Create virtual environment and install dependencies (`.[dev]`).                                       |
+| `make serve`         | Start the FastAPI app (background, with reload) at http://127.0.0.1:8000.                             |
+| `make mlflow`        | Launch the MLflow tracking UI (background) at http://127.0.0.1:5000.                                  |
+| `make ollama-model`  | Ensure a tools-capable Ollama model (`llama3.1`) is downloaded.                                       |
+| `make ollama`        | Start the Ollama runtime (background) at http://127.0.0.1:11434.                                      |
+| `make index-csv`     | Build the CSV-based RAG index using `rag/build_index_from_csv.py` (currently waits on app port).      |
+| `make mcp`           | Start the MCP server (`mcp_server.py`) for IDE/editor tool integration.                               |
+| `make run-all`       | Pull model, start Ollama, FastAPI, and MLflow, then build the CSV index.                              |
+| `make stop`          | Stop background services (FastAPI, MLflow, Ollama) and clean up PIDs.                                 |
+| `make clean-pids`    | Remove PID files from `.pids/`.                                                                       |
+| `make train`         | Train CatBoost, log to MLflow, and pin latest model URI to `.env`.                                    |
+| `make pin-latest`    | Re-pin `.env` to the most recent MLflow run without retraining.                                       |
+| `make model-uri`     | Show the currently pinned MLflow model URI from `.env`.                                               |
 
 ---
 
@@ -79,6 +97,30 @@ mlflow ui
 Access it at:  
 ➡️ [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
+## ⚙️ Run MCP Server
+
+```bash
+make mpc-all
+```
+
+### Connect a Client (required)
+
+```bash
+brew install uv
+
+mcp dev mcp_server.py # install what you are asked to install
+```
+
+🚀 MCP Inspector is up and running at:  http://localhost:6274/?MCP_PROXY_AUTH_TOKEN=<AUTOMATED_GENERATED_TOKEN>
+
+- Select `Connect`
+- Select `Tools`
+- Select `List Tools`
+- Select `Health`
+- Select `Run Tool`
+
+Your tool is now running via MCP
+
 ---
 
 ## 🦙 Install and Start Ollama (Required for `/ask` and `/agent`)
@@ -90,7 +132,7 @@ ollama serve
 brew services start ollama
 
 # Pull a model
-ollama pull llama3
+ollama pull llama3.1
 
 # Verify
 ollama list
@@ -205,13 +247,13 @@ data/*.parquet
 
 ## ✅ Quick Recap
 
-| **Feature** | **Runs on** | **Notes** |
-|--------------|-------------|------------|
-| CatBoost training | `ml/train_catboost.py` | Logs to MLflow |
-| MLflow tracking UI | `mlflow ui` | [http://127.0.0.1:5000](http://127.0.0.1:5000) |
-| Local LLM (Llama 3) | `ollama serve` | No cloud dependency |
-| RAG index | `rag/build_index*.py` | Embeds CSV & PDFs |
-| API layer | `uvicorn app.main:app --reload` | `/predict`, `/ask`, `/agent` |
+| **Feature**         | **Runs on**                     | **Notes**                                      |
+|---------------------|---------------------------------|------------------------------------------------|
+| CatBoost training   | `ml/train_catboost.py`          | Logs to MLflow                                 |
+| MLflow tracking UI  | `mlflow ui`                     | [http://127.0.0.1:5000](http://127.0.0.1:5000) |
+| Local LLM (Llama 3) | `ollama serve`                  | No cloud dependency                            |
+| RAG index           | `rag/build_index*.py`           | Embeds CSV & PDFs                              |
+| API layer           | `uvicorn app.main:app --reload` | `/predict`, `/ask`, `/agent`                   |
 
 ---
 
