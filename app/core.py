@@ -1,7 +1,9 @@
 import os
+
 import mlflow
-from dotenv import load_dotenv
 import pandas as pd
+from dotenv import load_dotenv
+
 from rag.query import query_rag
 
 # Load once at import (reuse across calls)

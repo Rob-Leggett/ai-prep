@@ -1,4 +1,5 @@
-import shutil, os
+import os
+import shutil
 
 src = "mlruns/0/<run_id>/artifacts/model"
 dst = "models/latest_catboost"

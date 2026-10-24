@@ -1,19 +1,23 @@
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
-import chromadb, os
+import os
 
-chroma = chromadb.PersistentClient(path="rag/chroma_store")
-collection = chroma.get_or_create_collection("legal_docs")
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from pypdf import PdfReader
 
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+from rag import store
+
 splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=200)
 
 for file in os.listdir("data"):
     if file.endswith(".pdf"):
-        docs = PyPDFLoader(f"data/{file}").load()
-        chunks = splitter.split_documents(docs)
-        for chunk in chunks:
-            emb = embedder.encode(chunk.page_content).tolist()
-            collection.add(documents=[chunk.page_content], embeddings=[emb], metadatas=[{"source": file}])
+        reader = PdfReader(f"data/{file}")
+        for page_no, page in enumerate(reader.pages):
+            chunks = splitter.split_text(page.extract_text() or "")
+            if not chunks:
+                continue
+            store.add(
+                ids=[f"{file}-p{page_no}-c{i}" for i in range(len(chunks))],
+                documents=chunks,
+                embeddings=store.embed(chunks),
+                sources=[file] * len(chunks),
+            )
 print("Indexed all PDFs.")

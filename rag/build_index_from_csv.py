@@ -1,12 +1,10 @@
 import os
+
 import pandas as pd
-import chromadb
-from sentence_transformers import SentenceTransformer
+
+from rag import store
 
 CSV_PATH = os.getenv("CSV_PATH", "data/sample.csv")
-CHROMA_PATH = os.getenv("CHROMA_PATH", "rag/chroma_store")
-COLLECTION = os.getenv("CHROMA_COLLECTION", "legal_docs")
-EMBED_MODEL = os.getenv("EMBED_MODEL", "all-MiniLM-L6-v2")
 
 assert os.path.exists(CSV_PATH), f"CSV not found: {CSV_PATH}"
 
@@ -20,17 +18,11 @@ docs = [
 ]
 ids = [f"row-{i}" for i in range(len(docs))]
 
-chroma = chromadb.PersistentClient(path=CHROMA_PATH)
-collection = chroma.get_or_create_collection(COLLECTION)
-
-embedder = SentenceTransformer(EMBED_MODEL)  # device auto-detect; set with SENTENCE_TRANSFORMERS_HOME if needed
-embeddings = embedder.encode(docs, show_progress_bar=False).tolist()
-
-collection.add(
+store.add(
     ids=ids,
     documents=docs,
-    embeddings=embeddings,
-    metadatas=[{"source": os.path.basename(CSV_PATH)} for _ in docs],
+    embeddings=store.embed(docs),
+    sources=[os.path.basename(CSV_PATH)] * len(docs),
 )
 
-print(f"✅ Indexed {len(docs)} rows from {CSV_PATH} into '{COLLECTION}'.")
+print(f"✅ Indexed {len(docs)} rows from {CSV_PATH} into '{store.COLLECTION}'.")

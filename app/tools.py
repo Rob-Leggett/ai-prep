@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
 from langchain.tools import tool
-from app.core import predict_income, ask_docs
+from pydantic import BaseModel, Field
+
+from app.core import ask_docs, predict_income
+
 
 class PredictArgs(BaseModel):
     age: float = Field(..., description="Age in years")

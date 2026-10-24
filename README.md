@@ -23,9 +23,12 @@ This project demonstrates how to integrate structured ML models, document retrie
 │  ├─ train_catboost.py      # trains & logs CatBoost model via MLflow
 │  └─ register_model.py      # (optional) local registry pattern
 ├─ rag/
-│  ├─ build_index.py         # chunk + embed PDFs into Chroma
-│  ├─ build_index_from_csv.py# embed structured CSV into Chroma
+│  ├─ build_index.py         # chunk + embed PDFs into the local vector store
+│  ├─ build_index_from_csv.py# embed structured CSV into the local vector store
+│  ├─ store.py               # DuckDB-backed vector store (cosine similarity)
 │  └─ query.py               # test queries with citations
+├─ mcp_server.py             # MCP server (mcp 2.x MCPServer) exposing the API as tools
+├─ tests/                    # pytest suite
 ├─ lakehouse/
 │  └─ legal/...              # parquet/csv “domains” for DuckDB
 ├─ data/                     # sample CSVs and PDFs
@@ -36,34 +39,36 @@ This project demonstrates how to integrate structured ML models, document retrie
 
 ## 🧩 Environment Setup
 
-### Create a virtual environment
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip setuptools wheel
-```
+Requires **Python 3.13+** and [uv](https://docs.astral.sh/uv/) (`brew install uv`).
 
 ### Install dependencies
 ```bash
-pip install -e ".[dev]"
+uv sync                      # creates .venv from uv.lock (app + dev tools)
+source .venv/bin/activate    # or prefix commands with `uv run`
 ```
 
-If you see build errors for `chromadb` on macOS, install Rust first:
+### Lint, test and audit
 ```bash
-brew install rust
+make test                    # ruff check . && pytest && pip-audit
+```
+
+### Upgrade dependencies
+```bash
+uv lock --upgrade && uv sync
 ```
 
 ### Makefile
 
 | **Command**          | **Description**                                                                                       |
 |----------------------|-------------------------------------------------------------------------------------------------------|
-| `make install`       | Create virtual environment and install dependencies (`.[dev]`).                                       |
+| `make install`       | Create the virtual environment and install dependencies (`uv sync`).                                  |
+| `make test`          | Run ruff, pytest and pip-audit.                                                                       |
 | `make serve`         | Start the FastAPI app (background, with reload) at http://127.0.0.1:8000.                             |
 | `make mlflow`        | Launch the MLflow tracking UI (background) at http://127.0.0.1:5000.                                  |
 | `make ollama-model`  | Ensure a tools-capable Ollama model (`llama3.1`) is downloaded.                                       |
 | `make ollama`        | Start the Ollama runtime (background) at http://127.0.0.1:11434.                                      |
 | `make index-csv`     | Build the CSV-based RAG index using `rag/build_index_from_csv.py` (currently waits on app port).      |
-| `make mcp`           | Start the MCP server (`mcp_server.py`) for IDE/editor tool integration.                               |
+| `make mcp-all`       | Start FastAPI, then the MCP server (`mcp_server.py`) for IDE/editor tool integration.                 |
 | `make run-all`       | Pull model, start Ollama, FastAPI, and MLflow, then build the CSV index.                              |
 | `make stop`          | Stop background services (FastAPI, MLflow, Ollama) and clean up PIDs.                                 |
 | `make clean-pids`    | Remove PID files from `.pids/`.                                                                       |
@@ -84,7 +89,7 @@ Expected output:
 Logged model. MAE=0.0410 R2=0.8194 run_id=ba91400a5aaf4a4ba5528efd7128f569
 ```
 
-This logs your model to the local MLflow tracking directory (`mlruns/`).
+This logs your model to the local MLflow store (`mlflow.db` for run metadata, `mlruns/` for artefacts).
 
 ---
 
@@ -100,7 +105,7 @@ Access it at:
 ## ⚙️ Run MCP Server
 
 ```bash
-make mpc-all
+make mcp-all
 ```
 
 ### Connect a Client (required)
@@ -175,7 +180,7 @@ Available endpoints:
 | `/`            | Redirects to interactive docs         | [http://127.0.0.1:8000/](http://127.0.0.1:8000/)                                                                                                                 |
 | `/health`      | Health check                          | [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)                                                                                                     |
 | `/predict`     | Calls CatBoost model                  | [http://127.0.0.1:8000/predict?age=42&income=90000](http://127.0.0.1:8000/predict?age=42&income=90000)                                                           |
-| `/ask`         | Queries your Chroma index via Llama 3 | [http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?](http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?) |
+| `/ask`         | Queries your RAG index via Llama 3.1  | [http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?](http://127.0.0.1:8000/ask?question=Which%20age%20has%20the%20highest%20income?) |
 | `/agent`       | Orchestrates ML + RAG via LangGraph   | [http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?](http://127.0.0.1:8000/agent?query=Which%20tool%20should%20I%20use?)                         |
 
 Interactive Swagger UI:  
@@ -200,9 +205,9 @@ Interactive Swagger UI:
 |---------------------|--------------------------------------------------|------------------------------------------------|
 | Classic ML          | `catboost`, `shap`                               | Model training + interpretability              |
 | Serving             | `fastapi`, `uvicorn`                             | API endpoints for `/predict`, `/ask`, `/agent` |
-| RAG Stack           | `chromadb`, `sentence-transformers`, `faiss-cpu` | Embed and query structured/unstructured data   |
+| RAG Stack           | `duckdb`, `sentence-transformers`, `faiss-cpu`   | Embed and query structured/unstructured data   |
 | Agents              | `langchain`, `langgraph`, `langchain-ollama`     | Build reasoning chains using multiple tools    |
-| LLM Runtime         | `ollama` *(external binary)*                     | Run Llama 3 locally                            |
+| LLM Runtime         | `ollama` *(external binary)*                     | Run Llama 3.1 locally                          |
 | Data                | `duckdb`, `pyarrow`                              | Mini-lakehouse for structured datasets         |
 | Experiment Tracking | `mlflow`                                         | Track metrics, artefacts, and models           |
 | Visual / Notebook   | `jupyterlab`, `matplotlib`, `seaborn`            | Exploration & plotting                         |
@@ -233,7 +238,8 @@ mlartifacts/
 catboost_info/
 
 # Vector DB / RAG
-rag/chroma_store/
+rag/vector_store.duckdb*
+mlflow.db
 
 # Data
 data/*.csv
@@ -251,7 +257,7 @@ data/*.parquet
 |---------------------|---------------------------------|------------------------------------------------|
 | CatBoost training   | `ml/train_catboost.py`          | Logs to MLflow                                 |
 | MLflow tracking UI  | `mlflow ui`                     | [http://127.0.0.1:5000](http://127.0.0.1:5000) |
-| Local LLM (Llama 3) | `ollama serve`                  | No cloud dependency                            |
+| Local LLM (Llama 3.1) | `ollama serve`                  | No cloud dependency                            |
 | RAG index           | `rag/build_index*.py`           | Embeds CSV & PDFs                              |
 | API layer           | `uvicorn app.main:app --reload` | `/predict`, `/ask`, `/agent`                   |
 
@@ -261,9 +267,8 @@ data/*.parquet
 
 ```bash
 # Setup
-python3 -m venv .venv
+uv sync
 source .venv/bin/activate
-pip install -e ".[dev]"
 
 # Train + track
 python ml/train_catboost.py

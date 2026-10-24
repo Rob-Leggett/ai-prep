@@ -1,9 +1,9 @@
 import mlflow.catboost
-from mlflow.models import infer_signature
-from catboost import CatBoostRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_absolute_error
 import pandas as pd
+from catboost import CatBoostRegressor
+from mlflow.models import infer_signature
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
 
 # Load data
 df = pd.read_csv("data/sample.csv")

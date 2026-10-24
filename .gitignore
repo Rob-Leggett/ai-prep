@@ -213,6 +213,8 @@ mlartifacts/
 models/
 /catboost_info/
 rag/chroma_store/
+rag/vector_store.duckdb*
+mlflow.db
 /.pids/
 
 # Keep uv.lock tracked

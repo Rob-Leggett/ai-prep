@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Query
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
 
-from app.core import predict_income, ask_docs
-from app.tools import predict_income_tool, ask_docs_tool
+from app.core import ask_docs, predict_income
+from app.tools import ask_docs_tool, predict_income_tool
 
 app = FastAPI(title="Local AI Platform")
 

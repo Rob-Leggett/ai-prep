@@ -16,14 +16,16 @@ ML_PID  := $(PIDDIR)/mlflow.pid
 OL_PID  := $(PIDDIR)/ollama.pid
 MCP_PID  := $(PIDDIR)/mcp.pid
 
-.PHONY: install serve mlflow ollama index-csv run-all mcp stop clean-pids
+.PHONY: install test serve mlflow ollama index-csv run-all mcp stop clean-pids
 
 # --- Install / Setup ---
 install:
-	python3 -m venv .venv
-	source .venv/bin/activate
-	pip install -U pip setuptools wheel
-	pip install -e ".[dev]"
+	uv sync
+
+test:
+	uv run ruff check .
+	uv run pytest -q
+	uv run pip-audit
 
 # --- Servers ---
 
