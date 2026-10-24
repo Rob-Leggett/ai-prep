@@ -1,5 +1,7 @@
 # 🧠 ai-prep
 
+[![License](https://img.shields.io/github/license/Rob-Leggett/ai-prep)](LICENSE) [![Python 3.13](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![FastAPI 0.162](https://img.shields.io/badge/FastAPI-0.162-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![LangChain 1.4](https://img.shields.io/badge/LangChain-1.4-1C3C3C?logo=langchain&logoColor=white)](https://www.langchain.com/)
+
 A **local AI playground** combining:
 
 - **Classic ML (CatBoost + MLflow)**
